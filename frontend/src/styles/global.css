@@ -1,0 +1,9 @@
+body { margin: 0; font-family: sans-serif; }
+
+:root {
+  --bg-primary: #0b0f14;      /* near-black */
+  --bg-secondary: #111827;   /* dark grey */
+  --text-primary: #e5e7eb;   /* off-white */
+  --text-secondary: #9ca3af; /* muted grey */
+  --border-subtle: #1f2937;  /* divider */
+}
