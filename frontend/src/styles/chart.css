@@ -1,0 +1,148 @@
+/* =========================
+   Charts Layout
+========================= */
+.charts-layout {
+  display: flex;
+  min-height: calc(100vh - 64px);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* =========================
+   Sidebar
+========================= */
+.sidebar {
+  width: 240px;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-subtle);
+  padding: 1.5rem 1rem;
+  overflow: hidden;
+
+  /* Subtle animation */
+  transition: width 0.25s ease;
+}
+
+/* Sidebar header */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.sidebar-title {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Toggle button */
+.sidebar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  z-index: 2;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+  color: var(--text-primary);
+}
+
+/* Sidebar navigation */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-link {
+  text-decoration: none;
+  color: var(--text-primary);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+
+  transition: 
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Active & hover state */
+.sidebar-link:hover,
+.sidebar-link.active {
+  background-color: rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+}
+
+/* =========================
+   Collapsed Sidebar
+========================= */
+.sidebar.collapsed {
+  width: 64px;
+}
+
+.sidebar.collapsed .sidebar-title,
+.sidebar.collapsed .sidebar-link {
+  opacity: 0;
+  transform: translateX(-6px);
+  pointer-events: none;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  transform: rotate(180deg);
+}
+
+/* =========================
+   Main Charts Area
+========================= */
+.charts-main {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* =========================
+   Chart Container
+========================= */
+.chart-container {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+/* Chart header */
+.chart-header h2 {
+  margin-bottom: 0.25rem;
+  font-size: 1.25rem;
+}
+
+.chart-header p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* Placeholder for charts */
+.chart-placeholder {
+  margin-top: 2rem;
+  height: 320px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+}
