@@ -18,6 +18,8 @@
   font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: 0.4px;
+  color: white;
+  text-decoration: none;
 }
 
 /* Navigation */
@@ -43,3 +45,37 @@
   color: var(--text-primary);
   border-bottom: 2px solid var(--text-primary);
 }
+
+/* Right-side auth section */
+.header__auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header__user {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Register button outline */
+.nav-link--outline {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+}
+
+/* Logout button */
+.logout-btn {
+  background: none;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
