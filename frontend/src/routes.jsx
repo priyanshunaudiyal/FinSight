@@ -16,7 +16,7 @@ export default function AppRoutes() {
       {/* Public routes */}
       <Route path="/" element={<Home />} />
       <Route path="/charts" element={<Charts />} />
-      <Route path="/charts/:id" element={<ChartDetail />} />
+      <Route path="/charts/:id" element={<Charts />} />
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
