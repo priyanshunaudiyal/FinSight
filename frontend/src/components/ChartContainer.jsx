@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,18 +8,49 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+
+import { fetchChart } from "../services/chartApi";
 import { chartDataMap } from "../services/chartData";
 
 const RANGES = ["1M", "3M"];
-const DATASETS = ["price", "volume"];
 
 export default function ChartContainer() {
   const { id } = useParams();
-  const chart = chartDataMap[id];
 
+  const [chart, setChart] = useState(null);
   const [range, setRange] = useState("3M");
-  const [dataset, setDataset] = useState("price");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setLoading(true);
+    setError(false);
+
+    fetchChart(id)
+      .then((data) => {
+        if (isMounted) {
+          setChart(data);
+        }
+      })
+      .catch(() => {
+        // Fallback to mock data if backend fails
+        if (isMounted) {
+          setChart(chartDataMap[id] || null);
+          setError(true);
+        }
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
   if (!chart) {
     return (
@@ -29,14 +60,7 @@ export default function ChartContainer() {
     );
   }
 
-  const data =
-    chart.datasets?.[dataset]?.ranges?.[range] || [];
-
-  const handleChange = (fn) => {
-    setLoading(true);
-    fn();
-    setTimeout(() => setLoading(false), 300);
-  };
+  const data = chart.ranges?.[range] || [];
 
   return (
     <section className="chart-container">
@@ -45,44 +69,21 @@ export default function ChartContainer() {
         <div>
           <h2>{chart.title}</h2>
           <p>
-            {chart.datasets[dataset].label} · {range}
+            {range} {error && "· Offline mode"}
           </p>
         </div>
 
-        <div className="chart-actions">
-          {/* Dataset toggle */}
-          <div className="chart-controls">
-            {DATASETS.map((d) => (
-              <button
-                key={d}
-                className={`chart-control ${
-                  dataset === d ? "active" : ""
-                }`}
-                onClick={() =>
-                  handleChange(() => setDataset(d))
-                }
-              >
-                {d.toUpperCase()}
-              </button>
-            ))}
-          </div>
-
-          {/* Range toggle */}
-          <div className="chart-controls">
-            {RANGES.map((r) => (
-              <button
-                key={r}
-                className={`chart-control ${
-                  range === r ? "active" : ""
-                }`}
-                onClick={() =>
-                  handleChange(() => setRange(r))
-                }
-              >
-                {r}
-              </button>
-            ))}
-          </div>
+        {/* Controls */}
+        <div className="chart-controls">
+          {RANGES.map((r) => (
+            <button
+              key={r}
+              className={`chart-control ${range === r ? "active" : ""}`}
+              onClick={() => setRange(r)}
+            >
+              {r}
+            </button>
+          ))}
         </div>
       </header>
 
@@ -95,7 +96,7 @@ export default function ChartContainer() {
             <LineChart data={data}>
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip />
               <Line
                 type="monotone"
                 dataKey="value"
@@ -108,17 +109,5 @@ export default function ChartContainer() {
         </div>
       )}
     </section>
-  );
-}
-
-/* Tooltip */
-function CustomTooltip({ active, payload, label }) {
-  if (!active || !payload?.length) return null;
-
-  return (
-    <div className="chart-tooltip">
-      <strong>{label}</strong>
-      <div>{payload[0].value}</div>
-    </div>
   );
 }
