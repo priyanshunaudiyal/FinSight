@@ -1,0 +1,25 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Chart {
+  id        String      @id
+  name      String
+  createdAt DateTime    @default(now())
+  data      ChartPoint[]
+}
+
+model ChartPoint {
+  id      Int    @id @default(autoincrement())
+  chartId String
+  range   String
+  date    String
+  value   Float
+
+  chart   Chart @relation(fields: [chartId], references: [id])
+}
