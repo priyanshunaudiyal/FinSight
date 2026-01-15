@@ -23,3 +23,12 @@ model ChartPoint {
 
   chart   Chart @relation(fields: [chartId], references: [id])
 }
+
+model User {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
