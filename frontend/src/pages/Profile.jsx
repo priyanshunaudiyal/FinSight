@@ -1,31 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiFetch } from "../services/api";
 import { useAuth } from "../auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 
 export default function Profile() {
-  const { user, login } = useAuth();
+  const { user, loading: authLoading, setUser } = useAuth();
 
-  const [firstName, setFirstName] = useState(user.firstName);
-  const [lastName, setLastName] = useState(user.lastName);
-  const [loading, setLoading] = useState(false);
+  console.log("Profile render", { authLoading, user });
+  
+  const navigate = useNavigate();
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState("");
 
-  const handleSave = () => {
-    setLoading(true);
+  // Populate form whenever user becomes available OR changes
+  useEffect(() => {
+    if (!user) return;
 
-    const updatedUser = {
-      ...user,
-      firstName,
-      lastName,
-    };
+    setFirstName(user.firstName || "");
+    setLastName(user.lastName || "");
+  }, [user?.id]);
 
-    // reuse login() to update auth state cleanly
-    login(updatedUser);
+  // Optional backend sync (safe)
+  useEffect(() => {
+    if (authLoading || !user) return;
 
-    setTimeout(() => {
-      setLoading(false);
+    apiFetch("/profile/me")
+      .then((data) => {
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
+      })
+      .catch(() => {});
+  }, [authLoading, user?.id, setUser]);
+
+  if (authLoading || !user) {
+    return <div className="auth-container">Loading...</div>;
+  }
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSuccess("");
+
+    try {
+      const data = await apiFetch("/profile/me", {
+        method: "PUT",
+        body: JSON.stringify({ firstName, lastName }),
+      });
+
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
       setSuccess("Profile updated successfully");
-    }, 400);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -38,46 +70,34 @@ export default function Profile() {
             className="auth-input"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First Name"
           />
 
           <input
             className="auth-input"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
-            placeholder="Last Name"
           />
 
           <input className="auth-input" value={user.email} disabled />
 
-          <p
-            style={{
-              fontSize: "0.75rem",
-              color: "var(--text-secondary)",
-              marginTop: "-0.5rem",
-            }}
-          >
-            Email cannot be changed.
-          </p>
+          <p className="auth-hint">Email cannot be changed.</p>
 
-          {success && (
-            <div
-              style={{
-                fontSize: "0.8rem",
-                color: "#4ade80",
-                textAlign: "center",
-              }}
-            >
-              {success}
-            </div>
-          )}
+          {success && <p className="auth-success">{success}</p>}
 
           <button
             className="auth-button"
             onClick={handleSave}
-            disabled={loading}
+            disabled={saving}
           >
-            {loading ? "Saving..." : "Save Changes"}
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+
+          <button
+            className="auth-button"
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            Home
           </button>
         </div>
       </div>

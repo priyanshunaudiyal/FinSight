@@ -25,20 +25,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+    setLoading(true);
 
     try {
-      setLoading(true);
-      const user = await loginUser({ email, password });
-      login(user);
+      await login(email, password);
       navigate("/");
-    } catch {
-      setError("Invalid email or password");
+    } catch (err) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }

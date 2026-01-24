@@ -4,7 +4,8 @@ import dotenv from "dotenv";
 
 import healthRoutes from "./routes/health.routes.js";
 import chartsRoutes from "./routes/charts.routes.js";
-import authRoutes from "../src/routes/auth.routes.js";
+import authRoutes from "./routes/auth.routes.js";
+import profileRoutes from "./routes/profile.routes.js";
 
 dotenv.config();
 
@@ -16,5 +17,6 @@ app.use(express.json());
 app.use("/api/health", healthRoutes);
 app.use("/api/charts", chartsRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
 
 export default app;

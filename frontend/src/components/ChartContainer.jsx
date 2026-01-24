@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { fetchChart } from "../services/chartApi";
+import { apiFetch } from "../services/api";
 import { chartDataMap } from "../services/chartData";
 
 const RANGES = ["1M", "3M"];
@@ -28,23 +28,21 @@ export default function ChartContainer() {
     setLoading(true);
     setError(false);
 
-    fetchChart(id)
+    apiFetch(`/charts/${id}`)
       .then((data) => {
         if (isMounted) {
           setChart(data);
         }
       })
       .catch(() => {
-        // Fallback to mock data if backend fails
+        // Offline fallback
         if (isMounted) {
           setChart(chartDataMap[id] || null);
           setError(true);
         }
       })
       .finally(() => {
-        if (isMounted) {
-          setLoading(false);
-        }
+        if (isMounted) setLoading(false);
       });
 
     return () => {
